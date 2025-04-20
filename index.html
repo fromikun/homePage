@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./index.js"></script>
+    <link rel="stylesheet" href="./index.css" />
+    <title>自定义起始页</title>
+  </head>
+  <body>
+    <!-- 时间 -->
+    <div class="time">
+      <div title="时间" id="time"></div>
+      <div title="日期" id="date"></div>
+    </div>
+    <!-- 搜索框 -->
+    <div class="search">
+      <div>
+        <div>
+          <img id="engine" title="搜索引擎" />
+        </div>
+        <input
+          type="text"
+          placeholder="输入搜索内容"
+          id="searchInput"
+          title="搜索框"
+        />
+        <div>
+          <img src="./static/search.png" alt="搜索" title="搜索按钮" />
+        </div>
+      </div>
+      <div id="history"></div>
+    </div>
+    <!-- 主内容 -->
+    <div class="content">
+      <div class="item">game</div>
+    </div>
+    <!-- 固定内容 -->
+    <div class="setting">
+      <div>
+        <img src="./static/settings.png" alt="设置" name="setting" />
+      </div>
+      <div id="settingContent"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,230 @@
+body {
+  margin: 0;
+  height: 100vh;
+  align-items: center;
+  background: url("https://ts1.tc.mm.bing.net/th/id/R-C.08fb1024fba90917b79f5655800fccef?rik=OX2a0abv8uKeqA&riu=http%3a%2f%2fimage.imufu.cn%2fforum%2f201308%2f01%2f101502xfnk983fk3hnp2it.jpg&ehk=HZHTdPa88LeDrxO54YQ%2b%2b8MeR9b4cNToGaE4fGZnBsQ%3d&risl=&pid=ImgRaw&r=0");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+/* flex */
+body,
+.content,
+.item,
+.search :nth-child(3),
+.setting,
+.search,
+.setting > div:nth-child(2) > div {
+  display: flex;
+}
+
+/* center */
+.item,
+.search > div:nth-child(1),
+.setting > div:nth-child(1),
+.warning,
+.time {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* column */
+.time,
+.setting,
+body {
+  flex-direction: column;
+}
+
+/* fixed */
+.setting,
+.warning {
+  position: fixed;
+}
+
+/* 时间 */
+.time {
+  margin-top: 2rem;
+  color: white;
+}
+.time > div:nth-child(1) {
+  font-size: 3rem;
+  font-weight: bold;
+}
+.time > div:nth-child(2) {
+  margin-bottom: 20px;
+}
+
+/* 搜索 */
+.search {
+  background-color: rgba(255, 255, 255, 0.6);
+  width: 60vw;
+  border-radius: 20px;
+  padding: 5px;
+  flex-direction: column;
+  position: relative;
+}
+
+.search input {
+  flex: 1;
+  font-size: 1rem;
+  border: 0;
+  background: none;
+  color: #333;
+  min-width: 0;
+}
+
+.search input:focus {
+  outline: none;
+}
+
+.search > div:nth-child(1) > div:nth-child(1) {
+  height: 30px;
+  width: 30px;
+  min-width: 30px;
+}
+
+.search > div:nth-child(1) > div:nth-child(1) img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.6;
+  cursor: pointer;
+}
+.search > div:nth-child(1) > div:nth-child(1) img:hover {
+  opacity: 1;
+}
+.search > div:nth-child(1) > :nth-child(3) {
+  height: 30px;
+  width: 30px;
+  min-width: 30px;
+  align-items: center;
+  cursor: pointer;
+}
+.search > div:nth-child(1) > :nth-child(3) img {
+  width: 80%;
+  height: 80%;
+}
+.search > div:nth-child(2) {
+  position: absolute;
+  flex-direction: column;
+  width: 100%;
+  top: 40px;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  display: none;
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+.search > div:nth-child(2) > div {
+  cursor: pointer;
+  padding: 10px;
+}
+.search > div:nth-child(2) > div:hover,
+.setting > div:nth-child(2) > div:hover {
+  background-color: #eee;
+}
+
+/* content */
+.content {
+  width: 80vw;
+}
+
+/* setting */
+.setting {
+  top: 20px;
+  right: 20px;
+  align-items: end;
+}
+
+.setting button {
+  background-color: white;
+  border-radius: 5px;
+  border: 0;
+  cursor: pointer;
+}
+
+.setting > div:nth-child(1) {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.setting > div:nth-child(1) > img {
+  width: 80%;
+}
+
+.setting > div:nth-child(2) {
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px;
+  width: 200px;
+  color: #333;
+  display: none;
+  animation: show 1s ease-out;
+}
+
+.setting > div:nth-child(2) > div {
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  justify-content: space-between;
+}
+
+.setting > div:nth-child(2) > div:hover {
+  background-color: #ccc;
+}
+
+/* ad */
+.warning {
+  opacity: 0;
+  z-index: 1;
+  align-self: center;
+  top: 10%;
+  padding: 5px;
+  border-radius: 4px;
+  color: #333;
+  background-color: #ccc;
+  animation: hide 2s ease-in;
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}
+
+@keyframes show {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 12px;
+  }
+  .setting > div:nth-child(1) {
+    width: 35px;
+    height: 35px;
+  }
+}
