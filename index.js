@@ -174,6 +174,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // 函数
+  function showHistory() {
+    searchBox.style.backgroundColor = "white";
+    if (page.history.length > 0) {
+      searchBox.style.borderRadius = "20px 20px 0 0";
+    }
+    history.style.backgroundColor = "white";
+    history.style.display = "flex";
+    history.style.animation = "show 1s ease-in-out";
+  }
+
   function whichEngine() {
     switch (page.search.save) {
       case 0:
@@ -258,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function showSearch() {
     let searchText = searchInput.value.trim();
     if (!searchText) {
-      showWarning("请输入搜索内容！");
+      showPopup("请输入搜索内容！");
       return;
     }
 
@@ -283,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 记录搜索历史
     if (page.history.length < 10) {
       if (page.history.includes(searchText)) {
-        showWarning("该搜索内容已在搜索历史中！");
+        showPopup("该搜索内容已在搜索历史中！");
         return;
       } else {
         page.history.unshift(searchText);
@@ -294,14 +304,55 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.value = "";
   }
 
-  // 弹窗
-  async function showWarning(text) {
-    let warning = document.createElement("div");
-    warning.classList.add("warning");
-    document.body.appendChild(warning);
-    warning.textContent = text;
-    await wait(2000);
-    warning.remove();
+  // 显示弹窗
+  async function showPopup(text, className) {
+    document.querySelector(".warning")?.remove();
+    const div = document.createElement("div");
+    div.textContent = text;
+    if (!className) {
+      className = "prompt";
+    }
+    document.body.appendChild(div);
+
+    if (className === "prompt") {
+      div.classList.add(className);
+      await wait(2000);
+      div.remove();
+    } else if (className === "warning") {
+      div.textContent = "";
+      div.style.justifyContent = "end";
+      div.style.alignItems = "end";
+      const button = document.createElement("button");
+      const button2 = document.createElement("button");
+      const span = document.createElement("span");
+
+      span.textContent = text;
+      span.style.position = "absolute";
+      span.style.top = "5px";
+      span.style.left = "5px";
+
+      button.type = button2.type = "button";
+      button.setAttribute("data-name", "confirm");
+      button2.setAttribute("data-name", "cancel");
+      button.textContent = "确认";
+      button2.textContent = "取消";
+
+      div.appendChild(span);
+      div.appendChild(button);
+      div.appendChild(button2);
+      div.classList.add("warning");
+    }
+  }
+
+  function clear(name) {
+    if (name === "history") {
+      page.history = [];
+      setData();
+      update("updateHistory");
+    } else if (name === "reset") {
+      localStorage.clear();
+      location.reload();
+    }
   }
 
   function wait(ms) {
@@ -312,13 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(e.target.getAttribute("data-name"));
     switch (e.target.getAttribute("data-name")) {
       case "searchInput":
-        searchBox.style.backgroundColor = "white";
-        if (page.history.length > 0) {
-          searchBox.style.borderRadius = "20px 20px 0 0";
-        }
-        history.style.backgroundColor = "white";
-        history.style.display = "flex";
-        history.style.animation = "show 1s ease-in-out";
+        showHistory();
         break;
       case "history":
         searchInput.value = e.target.textContent;
@@ -330,14 +375,14 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
       case "engine":
         whichEngine();
-        showWarning(page.search.txt[page.search.save]);
+        showPopup(page.search.txt[page.search.save]);
         break;
       case "engineBtn":
         whichEngine();
-        showWarning(page.search.txt[page.search.save]);
+        showPopup(page.search.txt[page.search.save]);
         break;
       case "backgroundBtn":
-        showWarning("壁纸更换成功！");
+        showPopup("壁纸更换成功！");
         break;
       case "timeBtn":
         if (page.setting.save[1] === "24小时制") {
@@ -347,34 +392,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         setData();
         update("updateSettingString");
-        showWarning(page.setting.save[1]);
+        showPopup(page.setting.save[1]);
         break;
       case "settingBtn":
         show(settingContent);
         break;
       case "historyBtn":
-        const result = confirm("确定要清除搜索记录吗？");
-        if (result) {
-          page.history = [];
-          setData();
-          update("updateHistory");
-          showWarning("搜索记录已清除！");
-        } else {
-          showWarning("取消清除搜索记录！");
-        }
+        showPopup("确定要清除搜索记录吗？", "warning");
         break;
       case "clearBtn":
-        const result2 = confirm("确定要清除所有数据吗？");
-        if (result2) {
-          localStorage.clear();
-          location.reload();
-        } else {
-          showWarning("取消清除数据！");
-        }
+        showPopup("确定要清除所有数据吗？", "warning");
+        break;
+      case "confirm":
+        clear(e.target.parentNode.getAttribute("data-name"));
+        showPopup("操作成功！");
+        document.querySelector(".warning")?.remove();
+        break;
+      case "cancel":
+        showPopup("操作取消！");
+        document.querySelector(".warning")?.remove();
         break;
       default:
-        const menu = document.querySelector(".menu");
-        if (menu) document.body.removeChild(menu);
+        document.querySelector(".menu")?.remove();
         break;
     }
   });
