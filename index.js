@@ -1,9 +1,87 @@
+// 读取本地存储
+const storedData = JSON.parse(localStorage.getItem("data"));
+let data = storedData?.data || null;
+
+// 如果没有数据，则初始化
+if (!data) {
+  newData = {
+    history: [],
+    info: "data-name",
+    search: {
+      txt: ["百度搜索", "必应搜索", "谷歌搜索"],
+      img: [
+        "https://www.baidu.com/favicon.ico",
+        "https://www.bing.com/favicon.ico",
+        "static/google.png",
+      ],
+      url: [
+        "https://www.baidu.com/s?wd=",
+        "https://www.bing.com/search?q=",
+        "https://www.google.com/search?q=",
+      ],
+      save: 0,
+    },
+    setting: {
+      func: ["backgroundBtn", "timeBtn", "engineBtn", "historyBtn", "clearBtn"],
+      txt: [
+        "更换背景图片",
+        "切换时间格式",
+        "切换搜索引擎",
+        "清除搜索记录",
+        "重置所有设置",
+      ],
+      save: ["背景图片", "24小时制", "百度搜索", "清除记录", "重置设置"],
+    },
+    content: [
+      {
+        info: "data-name",
+        txt: [],
+        img: [],
+      },
+    ],
+  };
+  localStorage.setItem("data", JSON.stringify({ data: newData }));
+  location.reload();
+}
+
+// 页面数据
+let page = data;
+console.log(storedData);
+console.log(page);
+
+// 右键菜单
+document.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  const menu = document.querySelector(".menu");
+  const div = document.createElement("div");
+
+  if (menu) menu.remove();
+  div.style.top = e.clientY + "px";
+  div.style.left = e.clientX + "px";
+  div.classList.add("menu");
+  div.style.animation = "show 0.5s ease-in-out";
+  div.style.display = "flex";
+
+  div.addEventListener("click", () => {
+    div.remove();
+  });
+
+  for (let i = 0; i < page.setting.func.length; i++) {
+    const content = document.createElement("div");
+    content.textContent = page.setting.txt[i];
+    content.setAttribute(page.info, page.setting.func[i]);
+    content.style.animation = `show ${1 + i / 10}s ease-in-out`;
+    div.appendChild(content);
+  }
+
+  document.body.appendChild(div);
+});
+
 document.addEventListener("DOMContentLoaded", () => {
-  // 时间相关
+  // 时间
   const time = document.getElementById("time");
   const date = document.getElementById("date");
   // 设置
-  const setting = document.querySelector(".setting");
   const settingContent = document.getElementById("settingContent");
   // 搜索
   const searchBox = document.querySelector(".search");
@@ -12,98 +90,59 @@ document.addEventListener("DOMContentLoaded", () => {
   // 历史记录
   const history = document.getElementById("history");
 
-  // 读取本地存储
-  const storedData = JSON.parse(localStorage.getItem("data"));
-  let data = storedData?.data || null;
-
-  // 如果没有数据，则初始化
-  if (!data) {
-    data = {
-      settings: [
-        {
-          title: "时间格式",
-          text: "24小时制",
-          name: "time",
-        },
-        {
-          title: "搜索引擎",
-          text: "百度搜索",
-          name: "engine",
-          engineImg: "https://www.baidu.com/favicon.ico",
-        },
-        {
-          title: "历史记录",
-          text: "清除记录",
-          name: "history",
-        },
-        {
-          title: "数据设置",
-          text: "清除数据",
-          name: "clear",
-        },
-      ],
-      history: [],
-    };
-    localStorage.setItem("data", JSON.stringify({ data }));
-  }
-
-  // 页面数据
-  let page = {
-    history: data.history || [], // 搜索历史
-    settings: data.settings || [], // 设置
-  };
-  console.log(storedData);
-  console.log(page);
-
   // 页面初始化
   function update(part) {
-    if (part === "updateHistory") {
-      updateHistory();
-    } else if (part === "updateSetting") {
-      updateSetting();
-    } else if (part === "all") {
+    if (part === "all") {
       setTime();
       updateHistory();
+      updateSetting();
+      updateSettingString();
+    } else if (part === "updateHistory") {
+      updateHistory();
+    } else if (part === "updateSetting") {
       updateSetting();
     } else if (part === "updateSettingString") {
       updateSettingString();
     }
+
+    // 更新历史记录
     function updateHistory() {
       history.textContent = "";
       for (let i = 0; i < page.history.length; i++) {
         const div = document.createElement("div");
-        div.setAttribute("title", "历史记录");
+        div.setAttribute("data-name", "history");
         div.textContent = page.history[i];
         div.style.animation = `show ${1 + i / 10}s ease-in-out`;
         history.appendChild(div);
       }
     }
 
+    // 更新设置
     function updateSetting() {
       settingContent.textContent = "";
-      for (let i = 0; i < page.settings.length; i++) {
+      for (let i = 0; i < page.setting.func.length; i++) {
         const div = document.createElement("div");
         const button = document.createElement("button");
         const span = document.createElement("span");
 
-        button.setAttribute("name", page.settings[i].name);
+        button.setAttribute(page.info, page.setting.func[i]);
         button.type = "button";
-        button.textContent = page.settings[i].text;
-        span.textContent = page.settings[i].title;
+        span.textContent = page.setting.txt[i];
         div.appendChild(span);
         div.appendChild(button);
         settingContent.appendChild(div);
       }
     }
+
+    // 更新设置文字和图片
     function updateSettingString() {
       const button = settingContent.querySelectorAll("button");
-      for (let i = 0; i < page.settings.length; i++) {
-        button[i].textContent = page.settings[i].text;
+      for (let i = 0; i < page.setting.func.length; i++) {
+        button[i].textContent = page.setting.save[i];
       }
+      engine.src = page.search.img[page.search.save]; // 更新搜索引擎图标
     }
-    engine.src = page.settings[1].engineImg; // 更新搜索引擎图标
   }
-
   update("all");
 
   function setData() {
@@ -117,33 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 事件监听
-  searchBox.addEventListener("click", (e) => {
-    switch (e.target.title) {
-      case "历史记录":
-        searchInput.value = e.target.textContent;
-        showSearch();
-        searchInput.value = "";
-        break;
-      case "搜索框":
-        searchBox.style.backgroundColor = "white";
-        if (page.history.length > 0) {
-          searchBox.style.borderRadius = "20px 20px 0 0";
-        }
-        history.style.backgroundColor = "white";
-        history.style.display = "flex";
-        history.style.animation = "show 1s ease-in-out";
-        break;
-      case "搜索按钮":
-        showSearch();
-        break;
-      case "搜索引擎":
-        whichEngine();
-        showWarning(page.settings[1].text);
-        break;
-      default:
-        break;
-    }
-  });
   searchInput.addEventListener("blur", async () => {
     searchBox.style.backgroundColor = "rgba(255,255,255,0.6)";
     history.style.backgroundColor = "rgba(255,255,255,0.6)";
@@ -153,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     history.style.animation = "";
     searchBox.style.borderRadius = "20px";
   });
+
   settingContent.addEventListener("mouseleave", async () => {
     settingContent.style.animation = "hide 2s ease-in";
     await wait(1900);
@@ -160,70 +173,29 @@ document.addEventListener("DOMContentLoaded", () => {
     settingContent.style.display = "none";
   });
 
-  setting.addEventListener("click", (e) => {
-    switch (e.target.name) {
-      case "setting":
-        show(settingContent);
-        break;
-      case "time":
-        if (e.target.textContent === "24小时制") {
-          page.settings[0].text = "12小时制";
-        } else {
-          page.settings[0].text = "24小时制";
-        }
-        setData("time");
-        update("updateSettingString");
-        showWarning(page.settings[0].text);
-        break;
-      case "engine":
-        whichEngine();
-        showWarning(page.settings[1].text);
-        break;
-      case "history":
-        const result = confirm("确定要清除搜索记录吗？");
-        if (result) {
-          page.history = [];
-          setData("history");
-          update("updateHistory");
-          showWarning("搜索记录已清除！");
-        } else {
-          showWarning("取消清除搜索记录！");
-        }
-        break;
-      case "clear":
-        const result2 = confirm("确定要清除所有数据吗？");
-        if (result2) {
-          localStorage.clear();
-          location.reload();
-        } else {
-          showWarning("取消清除数据！");
-        }
-        break;
-      default:
-        break;
-    }
-  });
-
   // 函数
   function whichEngine() {
-    switch (page.settings[1].text) {
-      case "百度搜索":
-        page.settings[1].text = "必应搜索";
-        page.settings[1].engineImg = "https://www.bing.com/favicon.ico";
+    switch (page.search.save) {
+      case 0:
+        engine.src = page.search.img[1];
+        page.search.save = 1;
+        page.setting.save[2] = page.search.txt[1];
         break;
-      case "必应搜索":
-        page.settings[1].text = "谷歌搜索";
-        page.settings[1].engineImg = "./static/google.png";
+      case 1:
+        engine.src = page.search.img[2];
+        page.search.save = 2;
+        page.setting.save[2] = page.search.txt[2];
         break;
-      case "谷歌搜索":
-        page.settings[1].text = "百度搜索";
-        page.settings[1].engineImg = "https://www.baidu.com/favicon.ico";
+      case 2:
+        engine.src = page.search.img[0];
+        page.search.save = 0;
+        page.setting.save[2] = page.search.txt[0];
         break;
       default:
         break;
     }
-    setData("engine");
-    setData("engineImg");
+
+    setData();
     update("updateSettingString");
   }
 
@@ -261,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const minute = now.getMinutes();
       const second = now.getSeconds();
 
-      if (page.settings[0].text === "12小时制") {
+      if (page.setting.save[1] === "12小时制") {
         time.textContent =
           timeTemp +
           " " +
@@ -291,22 +263,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 调用搜索
-    switch (page.settings[1].text) {
-      case "百度搜索":
-        window.location.href =
-          "https://www.baidu.com/s?wd=" + encodeURIComponent(searchText);
+    let url;
+    switch (page.search.save) {
+      case 0:
+        url = page.search.url[0];
         break;
-      case "必应搜索":
-        window.location.href =
-          "https://cn.bing.com/search?q=" + encodeURIComponent(searchText);
+      case 1:
+        url = page.search.url[1];
         break;
-      case "谷歌搜索":
-        window.location.href =
-          "https://www.google.com/search?q=" + encodeURIComponent(searchText);
+      case 2:
+        url = page.search.url[2];
         break;
       default:
         break;
     }
+    console.log(url);
+    window.location.href = url + encodeURIComponent(searchText);
 
     // 记录搜索历史
     if (page.history.length < 10) {
@@ -315,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       } else {
         page.history.unshift(searchText);
-        setData("history");
+        setData();
         update("updateHistory");
       }
     }
@@ -335,4 +307,75 @@ document.addEventListener("DOMContentLoaded", () => {
   function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  document.addEventListener("click", (e) => {
+    console.log(e.target.getAttribute("data-name"));
+    switch (e.target.getAttribute("data-name")) {
+      case "searchInput":
+        searchBox.style.backgroundColor = "white";
+        if (page.history.length > 0) {
+          searchBox.style.borderRadius = "20px 20px 0 0";
+        }
+        history.style.backgroundColor = "white";
+        history.style.display = "flex";
+        history.style.animation = "show 1s ease-in-out";
+        break;
+      case "history":
+        searchInput.value = e.target.textContent;
+        showSearch();
+        searchInput.value = "";
+        break;
+      case "searchBtn":
+        showSearch();
+        break;
+      case "engine":
+        whichEngine();
+        showWarning(page.search.txt[page.search.save]);
+        break;
+      case "engineBtn":
+        whichEngine();
+        showWarning(page.search.txt[page.search.save]);
+        break;
+      case "backgroundBtn":
+        showWarning("壁纸更换成功！");
+        break;
+      case "timeBtn":
+        if (page.setting.save[1] === "24小时制") {
+          page.setting.save[1] = "12小时制";
+        } else {
+          page.setting.save[1] = "24小时制";
+        }
+        setData();
+        update("updateSettingString");
+        showWarning(page.setting.save[1]);
+        break;
+      case "settingBtn":
+        show(settingContent);
+        break;
+      case "historyBtn":
+        const result = confirm("确定要清除搜索记录吗？");
+        if (result) {
+          page.history = [];
+          setData();
+          update("updateHistory");
+          showWarning("搜索记录已清除！");
+        } else {
+          showWarning("取消清除搜索记录！");
+        }
+        break;
+      case "clearBtn":
+        const result2 = confirm("确定要清除所有数据吗？");
+        if (result2) {
+          localStorage.clear();
+          location.reload();
+        } else {
+          showWarning("取消清除数据！");
+        }
+        break;
+      default:
+        const menu = document.querySelector(".menu");
+        if (menu) document.body.removeChild(menu);
+        break;
+    }
+  });
 });

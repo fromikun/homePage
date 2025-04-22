@@ -43,6 +43,34 @@ body {
   position: fixed;
 }
 
+/* menu */
+.menu {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  z-index: 1;
+  width: 20%;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 10px;
+  font-weight: bold;
+}
+.menu > div {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+}
+.menu > div:hover {
+  background-color: #ccc;
+}
+
+.menu,
+.search,
+.search > div:nth-child(2),
+.setting > div:nth-child(1) {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
 /* 时间 */
 .time {
   margin-top: 2rem;
@@ -58,7 +86,6 @@ body {
 
 /* 搜索 */
 .search {
-  background-color: rgba(255, 255, 255, 0.6);
   width: 60vw;
   border-radius: 20px;
   padding: 5px;
@@ -113,7 +140,6 @@ body {
   width: 100%;
   top: 40px;
   right: 0;
-  background-color: rgba(255, 255, 255, 0.6);
   display: none;
   border-radius: 0 0 20px 20px;
   overflow: hidden;
@@ -151,7 +177,6 @@ body {
   height: 45px;
   border-radius: 10px;
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .setting > div:nth-child(1) > img {

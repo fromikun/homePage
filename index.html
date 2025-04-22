@@ -17,28 +17,28 @@
     <div class="search">
       <div>
         <div>
-          <img id="engine" title="搜索引擎" />
+          <img id="engine" alt="搜索引擎" data-name="engine" />
         </div>
         <input
           type="text"
           placeholder="输入搜索内容"
+          data-name="searchInput"
           id="searchInput"
-          title="搜索框"
         />
         <div>
-          <img src="./static/search.png" alt="搜索" title="搜索按钮" />
+          <img src="./static/search.png" alt="搜索" data-name="searchBtn" />
         </div>
       </div>
       <div id="history"></div>
     </div>
     <!-- 主内容 -->
     <div class="content">
-      <div class="item">game</div>
+      <div class="item"></div>
     </div>
     <!-- 固定内容 -->
-    <div class="setting">
+    <div class="setting" title="设置">
       <div>
-        <img src="./static/settings.png" alt="设置" name="setting" />
+        <img src="./static/settings.png" alt="设置" data-name="settingBtn" />
       </div>
       <div id="settingContent"></div>
     </div>
