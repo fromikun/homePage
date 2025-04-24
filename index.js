@@ -4,7 +4,7 @@ let data = storedData?.data || null;
 
 // 如果没有数据，则初始化
 if (!data) {
-  newData = {
+  const newData = {
     history: [],
     info: "data-name",
     search: {
@@ -22,23 +22,38 @@ if (!data) {
       save: 0,
     },
     setting: {
-      func: ["backgroundBtn", "timeBtn", "engineBtn", "historyBtn", "clearBtn"],
+      func: [
+        "backgroundBtn",
+        "timeBtn",
+        "engineBtn",
+        "historyBtn",
+        "clearBtn",
+        "addBtn",
+      ],
       txt: [
         "更换背景图片",
         "切换时间格式",
         "切换搜索引擎",
         "清除搜索记录",
         "重置所有设置",
+        "添加标签",
       ],
-      save: ["背景图片", "24小时制", "百度搜索", "清除记录", "重置设置"],
+      save: [
+        "背景图片",
+        "24小时制",
+        "百度搜索",
+        "清除记录",
+        "重置设置",
+        "添加标签",
+      ],
     },
-    content: [
-      {
-        info: "data-name",
+    content: {
+      item: {
         txt: [],
         img: [],
+        url: [],
       },
-    ],
+    },
   };
   localStorage.setItem("data", JSON.stringify({ data: newData }));
   location.reload();
@@ -96,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setTime();
       updateHistory();
       updateSetting();
+      updateContent();
       updateSettingString();
     } else if (part === "updateHistory") {
       updateHistory();
@@ -141,6 +157,31 @@ document.addEventListener("DOMContentLoaded", () => {
         button[i].textContent = page.setting.save[i];
       }
       engine.src = page.search.img[page.search.save]; // 更新搜索引擎图标
+    }
+
+    // 更新内容标签
+    function updateContent() {
+      for (let i = 0; i < page.content.item.txt.length; i++) {
+        const div = document.createElement("div");
+        const img = document.createElement("img");
+        const a = document.createElement("a");
+
+        img.src = page.content.item.img[i] || "";
+        a.href = page.content.item.url[i] || "#";
+        a.textContent = page.content.item.txt[i] || "";
+        div.appendChild(img);
+        div.appendChild(a);
+        document.querySelector(".content").appendChild(div);
+      }
+    }
+  }
+
+  function SetTxt() {
+    let txt = prompt("请输入新标签内容：");
+    if (txt) {
+      page.content.item.txt.push(txt);
+      setData();
+      update("updateContent");
     }
   }
   update("all");
@@ -305,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 显示弹窗
-  async function showPopup(text, className) {
+  async function showPopup(text, className, dataName) {
     document.querySelector(".warning")?.remove();
     const div = document.createElement("div");
     div.textContent = text;
@@ -333,6 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       button.type = button2.type = "button";
       button.setAttribute("data-name", "confirm");
+      button.setAttribute("data-temp", dataName);
       button2.setAttribute("data-name", "cancel");
       button.textContent = "确认";
       button2.textContent = "取消";
@@ -345,11 +387,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function clear(name) {
-    if (name === "history") {
+    console.log(name);
+    if (name === "historyBtn") {
       page.history = [];
       setData();
       update("updateHistory");
-    } else if (name === "reset") {
+    } else if (name === "clearBtn") {
       localStorage.clear();
       location.reload();
     }
@@ -398,13 +441,24 @@ document.addEventListener("DOMContentLoaded", () => {
         show(settingContent);
         break;
       case "historyBtn":
-        showPopup("确定要清除搜索记录吗？", "warning");
+        showPopup(
+          "确定要清除搜索记录吗？",
+          "warning",
+          e.target.getAttribute("data-name")
+        );
         break;
       case "clearBtn":
-        showPopup("确定要清除所有数据吗？", "warning");
+        showPopup(
+          "确定要清除所有数据吗？",
+          "warning",
+          e.target.getAttribute("data-name")
+        );
+        break;
+      case "addBtn":
+        SetTxt();
         break;
       case "confirm":
-        clear(e.target.parentNode.getAttribute("data-name"));
+        clear(e.target.getAttribute("data-temp"));
         showPopup("操作成功！");
         document.querySelector(".warning")?.remove();
         break;
