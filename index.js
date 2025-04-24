@@ -166,6 +166,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const img = document.createElement("img");
         const a = document.createElement("a");
 
+        div.setAttribute("data-name", "content");
+        div.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          showPopup("删除标签？", "warning", "delete");
+          document.querySelector(".menu")?.remove();
+          div.setAttribute("data-temp", i);
+        });
         img.src = page.content.item.img[i] || "";
         a.href = page.content.item.url[i] || "#";
         a.textContent = page.content.item.txt[i] || "";
@@ -395,6 +402,18 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (name === "clearBtn") {
       localStorage.clear();
       location.reload();
+    } else if (name === "content") {
+      page.content.item.txt = [];
+      page.content.item.img = [];
+      page.content.item.url = [];
+      setData();
+      update("updateContent");
+    } else if (name === "delete") {
+      page.content.item.txt.splice(0, 1);
+      page.content.item.img.splice(0, 1);
+      page.content.item.url.splice(0, 1);
+      setData();
+      update("updateContent");
     }
   }
 

@@ -25,6 +25,7 @@ body,
 .search > div:nth-child(1),
 .setting > div:nth-child(1),
 .prompt,
+.content > div,
 .time {
   display: flex;
   justify-content: center;
@@ -151,10 +152,18 @@ body {
 }
 .content > div {
   width: 15%;
+  cursor: pointer;
   margin: 10px;
   border-radius: 10px;
   height: 100px;
   background-color: #ccc;
+}
+.content > div:hover {
+  background-color: #eee;
+}
+.content a {
+  color: #333;
+  text-decoration: none;
 }
 
 /* setting */
